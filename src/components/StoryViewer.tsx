@@ -10,6 +10,7 @@ interface StoryViewerProps {
 
 export default function StoryViewer({ userId, onClose }: StoryViewerProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [loading, setLoading] = useState(true);
   const user = useStoriesStore((state) =>
     state.users.find((user) => user.userId === userId)
   );
@@ -21,12 +22,18 @@ export default function StoryViewer({ userId, onClose }: StoryViewerProps) {
       if (!currentStory.viewed) {
         markStoryAsViewed(userId, currentStory.id);
       }
+
+      // Preload the image
+      const img = new Image();
+      img.src = currentStory.imageUrl;
+      img.onload = () => setLoading(false);
     }
   }, [currentIndex, userId, user, markStoryAsViewed]);
 
   const handleNext = () => {
     if (user && currentIndex < user.stories.length - 1) {
       setCurrentIndex(currentIndex + 1);
+      setLoading(true);
     } else {
       onClose();
     }
@@ -35,6 +42,7 @@ export default function StoryViewer({ userId, onClose }: StoryViewerProps) {
   const handlePrevious = () => {
     if (currentIndex > 0) {
       setCurrentIndex(currentIndex - 1);
+      setLoading(true);
     }
   };
 
@@ -51,15 +59,20 @@ export default function StoryViewer({ userId, onClose }: StoryViewerProps) {
         &times;
       </button>
       <div className="relative w-full max-w-md">
-        <div className="relative">
-          {/* TODO: Swap with Next/Image. Current implementation of API doesn't support it */}
-          <img
-            src={user.stories[currentIndex].imageUrl}
-            alt={`Story ${currentIndex + 1}`}
-            width={400}
-            height={600}
-            className="object-contain"
-          />
+        <div className="relative h-[85vh] aspect-[1/1.8]">
+          {loading && (
+            <div className="absolute inset-0 flex items-center justify-center">
+              <div className="loader"></div>
+            </div>
+          )}
+          <div
+            className="w-full h-full bg-cover bg-center"
+            style={{
+              backgroundImage: `url(${user.stories[currentIndex].imageUrl})`,
+              backgroundColor: "rgba(135, 135, 135, 1)",
+            }}
+          >
+          </div>
           <div className="absolute top-0 left-0 w-full h-1 bg-gray-500">
             <div
               className="bg-white h-full transition-all duration-300 ease-linear"

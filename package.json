@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "dotenv": "^16.4.7",
     "next": "15.1.0",
     "openai": "^4.76.3",
     "react": "^19.0.0",

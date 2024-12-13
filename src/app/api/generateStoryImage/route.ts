@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import OpenAI from "openai";
+import "dotenv/config";
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
@@ -12,20 +13,29 @@ export async function GET(request: Request) {
     });
   }
 
+  console.log(
+    `Creating an image for userId: ${userId} and storyId: ${storyId}`,
+  );
+
   const openai = new OpenAI({
     apiKey: process.env.OPENAI_API_KEY,
   });
 
   try {
-    const prompt = `An engaging image for user ${userId}, story ${storyId}`;
-    const response = await openai.createImage({
+    const prompt =
+      "a scenic nature picture that might be shown on social media, with no people visible.";
+    const response = await openai.images.generate({
+      model: "dall-e-3",
       prompt,
       n: 1,
-      size: "512x512",
-      response_format: "url",
+      size: "1024x1024",
     });
 
-    const imageUrl = response.data[0].url;
+    const imageUrl = response.data[0]?.url;
+
+    if (!imageUrl) {
+      throw new Error("Image URL is undefined");
+    }
 
     // Redirect to the generated image URL
     const res = NextResponse.redirect(imageUrl);

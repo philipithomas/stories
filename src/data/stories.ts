@@ -1,3 +1,5 @@
+import "dotenv/config";
+
 export interface Story {
   id: number;
   imageUrl: string;
@@ -40,15 +42,17 @@ const users: Omit<UserStories, "stories">[] = [
 ];
 
 function generateStories(): UserStories[] {
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL;
   const stories: UserStories[] = users.map((user) => {
     const numStories = Math.floor(Math.random() * 5) + 1; // Random number of stories (1-5)
     const userStories: Story[] = Array.from(
       { length: numStories },
       (_, index) => ({
         id: index + 1,
-        imageUrl: `/api/generateStoryImage?userId=${user.userId}&storyId=${
-          index + 1
-        }`,
+        imageUrl:
+          `${apiUrl}/api/generateStoryImage?userId=${user.userId}&storyId=${
+            index + 1
+          }`,
         viewed: false,
       }),
     );

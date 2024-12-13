@@ -14,13 +14,25 @@ npm run dev
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
+## Enviroment Variables
+
+* `NEXT_PUBLIC_API_URL` - URL of the REST API to fetch data from
+* `OPENAI_API_KEY` - Used for generating stories.
+
+Set up your local credentials with `cp .env.example .env` and fill in the missing values.
+
 ## Design notes
+
+Did:
 
 * Desktop-first design
 * Matches Inter font from Figma
 * Server-rendered Stories List on homepage for speed, but doesn't support loading additional users
 * Story viewer is client-only and doesn't have permalink
 
+TODO:
+* Dynamic URLs + page titles for image viewer
+* Better error handling
 
 ## REST API Design
 

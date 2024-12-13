@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Image from "next/image";
 import { useStoriesStore } from "@/store/useStoriesStore";
 
 interface StoryViewerProps {
@@ -52,20 +51,23 @@ export default function StoryViewer({ userId, onClose }: StoryViewerProps) {
         &times;
       </button>
       <div className="relative w-full max-w-md">
-        <Image
-          src={user.stories[currentIndex].imageUrl}
-          alt={`Story ${currentIndex + 1}`}
-          width={400}
-          height={600}
-          className="object-contain"
-        />
-        <div className="absolute top-0 left-0 w-full h-1 bg-gray-500">
-          <div
-            className="bg-white h-full"
-            style={{
-              width: `${((currentIndex + 1) / user.stories.length) * 100}%`,
-            }}
-          >
+        <div className="relative">
+          {/* TODO: Swap with Next/Image. Current implementation of API doesn't support it */}
+          <img
+            src={user.stories[currentIndex].imageUrl}
+            alt={`Story ${currentIndex + 1}`}
+            width={400}
+            height={600}
+            className="object-contain"
+          />
+          <div className="absolute top-0 left-0 w-full h-1 bg-gray-500">
+            <div
+              className="bg-white h-full transition-all duration-300 ease-linear"
+              style={{
+                width: `${((currentIndex + 1) / user.stories.length) * 100}%`,
+              }}
+            >
+            </div>
           </div>
         </div>
         {currentIndex > 0 && (

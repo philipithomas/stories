@@ -29,6 +29,7 @@ export async function GET(request: Request) {
       prompt,
       n: 1,
       size: "256x256",
+      quality: "standard",
     });
 
     const imageUrl = response.data[0]?.url;

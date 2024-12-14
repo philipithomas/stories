@@ -52,7 +52,7 @@ export default function StoryViewer() {
   const handleNextStory = () => {
     const nextStory = getNextStory(currentUserId!, currentStoryId!);
     if (nextStory) {
-      setCurrentUserAndStory(currentUserId!, nextStory.id);
+      setCurrentUserAndStory(nextStory.userId, nextStory.storyId);
       setLoading(true);
     } else {
       setCurrentUser(null);
@@ -60,9 +60,16 @@ export default function StoryViewer() {
   };
 
   const handlePreviousStory = () => {
+    console.log("handlePreviousStory");
     const previousStory = getPreviousStory(currentUserId!, currentStoryId!);
     if (previousStory) {
-      setCurrentUserAndStory(currentUserId!, previousStory.id);
+      console.log(
+        "previousStory",
+        previousStory,
+        previousStory.userId,
+        previousStory.storyId,
+      );
+      setCurrentUserAndStory(previousStory.userId, previousStory.storyId);
       setLoading(true);
     }
   };

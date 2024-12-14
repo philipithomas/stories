@@ -26,7 +26,7 @@ Set up your local credentials with `cp .env.example .env` and fill in the missin
 
 Done:
 
-* Desktop-first desig
+* Desktop-first design
 * Inter font
 * HeroIcons for icons
 * Loads story data dynamically via api call

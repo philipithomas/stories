@@ -6,6 +6,7 @@ import NextImage from "next/image";
 import UserPreview from "./UserPreview";
 import { UserStories } from "@/types/stories";
 import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/solid";
+import StoryDisplay from "./StoryDisplay";
 
 export default function StoryViewer() {
   const [loading, setLoading] = useState(true);
@@ -61,15 +62,8 @@ export default function StoryViewer() {
   };
 
   const handlePreviousStory = () => {
-    console.log("handlePreviousStory");
     const previousStory = getPreviousStory(currentUserId!, currentStoryId!);
     if (previousStory) {
-      console.log(
-        "previousStory",
-        previousStory,
-        previousStory.userId,
-        previousStory.storyId,
-      );
       setCurrentUserAndStory(previousStory.userId, previousStory.storyId);
       setLoading(true);
     }
@@ -131,6 +125,7 @@ export default function StoryViewer() {
         <div className="relative px-4">
           {loading && currentStoryId !== null && (
             <div className="absolute inset-0 flex items-center justify-center">
+              I AM LOAD
               <div className="loader"></div>
             </div>
           )}
@@ -146,15 +141,11 @@ export default function StoryViewer() {
                 </button>
               )}
             </div>
-            <div
-              className="flex-grow h-full bg-cover bg-center rounded-md"
-              style={{
-                backgroundImage: `url(${currentStory.imageUrl})`,
-                backgroundColor: "rgba(135, 135, 135, 1)",
-                aspectRatio: "10 / 18",
-              }}
-            >
-            </div>
+            <StoryDisplay
+              user={user}
+              currentStory={currentStory}
+              loading={loading}
+            />
             <div className="flex-none w-8 h-8 ml-4">
               {hasNextStory(currentUserId!, currentStoryId!) && (
                 <button

@@ -116,7 +116,7 @@ export default function StoryViewer({ userId, onClose }: StoryViewerProps) {
         <div className="flex items-center justify-center">
           {hasPreviousUser(currentUserId!) && (
             <div
-              className="flex-shrink-0 w-2/5 h-2/5 bg-gray-500 flex items-center justify-center"
+              className="flex-shrink-0 w-2/5 h-2/5 bg-gray-500 flex items-center justify-center rounded-md"
               style={{ backgroundColor: "rgba(135, 135, 135, 1)" }}
             >
               <UserPreview
@@ -133,23 +133,25 @@ export default function StoryViewer({ userId, onClose }: StoryViewerProps) {
             </div>
           )}
           <div className="flex items-center w-full h-full">
-            {hasPreviousStory(currentUserId!, currentStoryId!) && (
-              <button
-                onClick={handlePreviousStory}
-                className="flex-none bg-white rounded-full w-8 h-8 flex items-center justify-center"
-                aria-label="Previous Story"
-              >
-                <NextImage
-                  src="/left_chevron.svg"
-                  alt="Previous"
-                  width={16}
-                  height={16}
-                  className="w-4 h-4"
-                />
-              </button>
-            )}
+            <div className="flex-none w-8 h-8 mr-4">
+              {hasPreviousStory(currentUserId!, currentStoryId!) && (
+                <button
+                  onClick={handlePreviousStory}
+                  className="bg-white rounded-full w-full h-full flex items-center justify-center"
+                  aria-label="Previous Story"
+                >
+                  <NextImage
+                    src="/left_chevron.svg"
+                    alt="Previous"
+                    width={16}
+                    height={16}
+                    className="w-4 h-4"
+                  />
+                </button>
+              )}
+            </div>
             <div
-              className="flex-grow h-full bg-cover bg-center"
+              className="flex-grow h-full bg-cover bg-center rounded-md"
               style={{
                 backgroundImage: `url(${currentStory.imageUrl})`,
                 backgroundColor: "rgba(135, 135, 135, 1)",
@@ -157,28 +159,30 @@ export default function StoryViewer({ userId, onClose }: StoryViewerProps) {
               }}
             >
             </div>
-            {hasNextStory(currentUserId!, currentStoryId!) && (
-              <button
-                onClick={handleNextStory}
-                className="flex-none bg-white rounded-full w-8 h-8 flex items-center justify-center"
-                aria-label="Next Story"
-              >
-                <NextImage
-                  src="/right_chevron.svg"
-                  alt="Next"
-                  width={16}
-                  height={16}
-                  className="w-4 h-4"
-                />
-              </button>
-            )}
+            <div className="flex-none w-8 h-8 ml-4">
+              {hasNextStory(currentUserId!, currentStoryId!) && (
+                <button
+                  onClick={handleNextStory}
+                  className="bg-white rounded-full w-full h-full flex items-center justify-center"
+                  aria-label="Next Story"
+                >
+                  <NextImage
+                    src="/right_chevron.svg"
+                    alt="Next"
+                    width={16}
+                    height={16}
+                    className="w-4 h-4"
+                  />
+                </button>
+              )}
+            </div>
           </div>
         </div>
         <div className="flex items-center justify-center">
           {hasNextUser(currentUserId!) && (
             <div
               onClick={() => handleNextUser()}
-              className="flex-shrink-0 w-2/5 h-2/5 bg-gray-500 flex items-center justify-center"
+              className="flex-shrink-0 w-2/5 h-2/5 bg-gray-500 flex items-center justify-center rounded-md"
               style={{ backgroundColor: "rgba(135, 135, 135, 1)" }}
             >
               <UserPreview
@@ -189,7 +193,7 @@ export default function StoryViewer({ userId, onClose }: StoryViewerProps) {
           )}
         </div>
       </div>
-      <div className="h-16" style={{ height: "64px" }}></div>
+      <div className="h-16"></div>
     </div>
   );
 }

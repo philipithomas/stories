@@ -19,14 +19,16 @@ export default function StoryList() {
   };
 
   return (
-    <div className="flex space-x-4 overflow-x-scroll p-4">
-      {users.map((user: UserStories) => (
-        <UserPreview
-          key={user.userId}
-          user={user}
-          onClick={handleStorySelect}
-        />
-      ))}
+    <div>
+      <div className="flex space-x-4 overflow-x-scroll p-4">
+        {users.map((user: UserStories) => (
+          <UserPreview
+            key={user.userId}
+            user={user}
+            onClick={handleStorySelect}
+          />
+        ))}
+      </div>
       {selectedUser && (
         <StoryViewer userId={selectedUser} onClose={handleClose} />
       )}

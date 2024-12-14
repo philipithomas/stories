@@ -96,8 +96,8 @@ export default function StoryViewer({ userId, onClose }: StoryViewerProps) {
   }
 
   return (
-    <div className="fixed inset-0 bg-black flex flex-col">
-      <div className="flex justify-between items-center p-4">
+    <div className="fixed inset-0 bg-[#1a1a1a] flex flex-col">
+      <div className="flex justify-between items-center p-4 h-18">
         <NextImage
           src="/instagram_wordmark.svg"
           alt="Instagram logo"
@@ -112,8 +112,8 @@ export default function StoryViewer({ userId, onClose }: StoryViewerProps) {
           &times;
         </button>
       </div>
-      <div className="grid grid-cols-3 w-full h-full">
-        <div className="flex items-center justify-end">
+      <div className="grid grid-cols-3 w-full flex-grow">
+        <div className="flex items-center justify-center">
           {hasPreviousUser(currentUserId!) && (
             <div
               className="flex-shrink-0 w-2/5 h-2/5 bg-gray-500 flex items-center justify-center"
@@ -136,10 +136,16 @@ export default function StoryViewer({ userId, onClose }: StoryViewerProps) {
             {hasPreviousStory(currentUserId!, currentStoryId!) && (
               <button
                 onClick={handlePreviousStory}
-                className="flex-none text-black bg-white rounded-full w-3 h-3"
+                className="flex-none bg-white rounded-full w-8 h-8 flex items-center justify-center"
                 aria-label="Previous Story"
               >
-                &larr;
+                <NextImage
+                  src="/left_chevron.svg"
+                  alt="Previous"
+                  width={16}
+                  height={16}
+                  className="w-4 h-4"
+                />
               </button>
             )}
             <div
@@ -154,15 +160,21 @@ export default function StoryViewer({ userId, onClose }: StoryViewerProps) {
             {hasNextStory(currentUserId!, currentStoryId!) && (
               <button
                 onClick={handleNextStory}
-                className="flex-none text-black bg-white rounded-full w-3 h-3"
+                className="flex-none bg-white rounded-full w-8 h-8 flex items-center justify-center"
                 aria-label="Next Story"
               >
-                &rarr;
+                <NextImage
+                  src="/right_chevron.svg"
+                  alt="Next"
+                  width={16}
+                  height={16}
+                  className="w-4 h-4"
+                />
               </button>
             )}
           </div>
         </div>
-        <div className="flex items-center justify-start">
+        <div className="flex items-center justify-center">
           {hasNextUser(currentUserId!) && (
             <div
               onClick={() => handleNextUser()}
@@ -177,6 +189,7 @@ export default function StoryViewer({ userId, onClose }: StoryViewerProps) {
           )}
         </div>
       </div>
+      <div className="h-16" style={{ height: "64px" }}></div>
     </div>
   );
 }

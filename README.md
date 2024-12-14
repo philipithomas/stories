@@ -2,6 +2,8 @@
 
 A demo app implementing a social media story viewer.
 
+Check it out at: [stories-beige.vercel.app](https://stories-beige.vercel.app/)
+
 **Note:** Story images are generated with OpenAI Dall-E, so they will take a few seconds to load initially. But, after that they should be cached in the browser and the experience will be faster.
 
 

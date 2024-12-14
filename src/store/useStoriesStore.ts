@@ -1,48 +1,60 @@
 import { create } from "zustand";
+import { persist } from "zustand/middleware";
 
-export interface Story {
+interface Story {
   id: number;
   imageUrl: string;
   viewed: boolean;
 }
 
-export interface UserStories {
+interface UserStories {
   userId: number;
   username: string;
   profilePicture: string;
   stories: Story[];
 }
 
-export interface StoriesState {
+interface StoriesState {
   users: UserStories[];
   selectedUser: number | null;
   setSelectedUser: (userId: number | null) => void;
   markStoryAsViewed: (userId: number, storyId: number) => void;
-  setStories: (users: UserStories[]) => void;
+  setInitialStories: (initialStories: UserStories[]) => void;
 }
 
-export const createStoriesStore = () => {
-  return create<StoriesState>((set) => ({
-    users: [],
-    selectedUser: null,
-    setSelectedUser: (userId) => set({ selectedUser: userId }),
-    markStoryAsViewed: (userId, storyId) => {
-      set((state) => {
-        const updatedUsers = state.users.map((user) => {
-          if (user.userId === userId) {
-            const updatedStories = user.stories.map((story) => {
-              if (story.id === storyId) {
-                return { ...story, viewed: true };
-              }
-              return story;
-            });
-            return { ...user, stories: updatedStories };
-          }
-          return user;
+export const useStoriesStore = create<StoriesState>()(
+  persist(
+    (set) => ({
+      users: [],
+      selectedUser: null,
+      setSelectedUser: (userId) => set({ selectedUser: userId }),
+      markStoryAsViewed: (userId, storyId) => {
+        set((state) => {
+          const updatedUsers = state.users.map((user) => {
+            if (user.userId === userId) {
+              const updatedStories = user.stories.map((story) => {
+                if (story.id === storyId) {
+                  return { ...story, viewed: true };
+                }
+                return story;
+              });
+              return { ...user, stories: updatedStories };
+            }
+            return user;
+          });
+          return { users: updatedUsers };
         });
-        return { users: updatedUsers };
-      });
+
+        fetch(`/api/stories/${storyId}/viewed`, {
+          method: "POST",
+        }).catch((error) => {
+          console.error("Failed to sync viewed status:", error);
+        });
+      },
+      setInitialStories: (initialStories) => set({ users: initialStories }),
+    }),
+    {
+      name: "stories-storage",
     },
-    setStories: (users) => set({ users }),
-  }));
-};
+  ),
+);

@@ -6,7 +6,7 @@ export interface StoriesState {
   users: UserStories[];
   selectedUser: number | null;
   currentUserId: number | null;
-  currentStoryIndex: number;
+  currentStoryId: number | null;
 }
 
 export interface StoriesActions {
@@ -19,17 +19,17 @@ export interface StoriesActions {
   getNextUserId: (userId: number) => number | null;
   getNextStory: (
     userId: number,
-    currentIndex: number,
-  ) => { index: number } | null;
+    currentStoryId: number,
+  ) => { id: number } | null;
   getPreviousStory: (
     userId: number,
-    currentIndex: number,
-  ) => { index: number } | null;
-  hasNextStory: (userId: number, currentIndex: number) => boolean;
-  hasPreviousStory: (userId: number, currentIndex: number) => boolean;
+    currentStoryId: number,
+  ) => { id: number } | null;
+  hasNextStory: (userId: number, currentStoryId: number) => boolean;
+  hasPreviousStory: (userId: number, currentStoryId: number) => boolean;
   hasPreviousUser: (userId: number) => boolean;
   hasNextUser: (userId: number) => boolean;
-  setCurrentUserAndStory: (userId: number, storyIndex: number) => void;
+  setCurrentUserAndStory: (userId: number, storyId: number) => void;
   closeViewer: () => void;
   initializeStories: (initialStories: UserStories[]) => void;
 }
@@ -40,7 +40,7 @@ export const initStoriesStore = (): StoriesState => ({
   users: [],
   selectedUser: null,
   currentUserId: null,
-  currentStoryIndex: 0,
+  currentStoryId: null,
 });
 
 export const defaultInitState: StoriesState = initStoriesStore();
@@ -129,41 +129,60 @@ export const createStoriesStore = (
         hasNextUser: (userId) => {
           return get().getNextUserId(userId) !== null;
         },
-        getNextStory: (userId, currentIndex) => {
+        getNextStory: (userId, currentStoryId) => {
           const user = get().users.find((user) => user.userId === userId);
           if (!user) return null;
+          const currentIndex = user.stories.findIndex((story) =>
+            story.id === currentStoryId
+          );
+          if (currentIndex === -1) return null;
           if (currentIndex < user.stories.length - 1) {
-            return { index: currentIndex + 1 };
+            const nextStory = user.stories[currentIndex + 1];
+            return { id: nextStory.id };
           }
           const nextUser = get().getNextUser(userId);
-          return nextUser ? { index: 0 } : null;
-        },
-        getPreviousStory: (userId, currentIndex) => {
-          const user = get().users.find((user) => user.userId === userId);
-          if (!user) return null;
-          if (currentIndex > 0) {
-            return { index: currentIndex - 1 };
-          }
-          const previousUser = get().getPreviousUser(userId);
-          return previousUser
-            ? { index: previousUser.stories.length - 1 }
+          return nextUser && nextUser.stories.length > 0
+            ? { id: nextUser.stories[0].id }
             : null;
         },
-        hasNextStory: (userId, currentIndex) => {
+        getPreviousStory: (userId, currentStoryId) => {
+          const user = get().users.find((user) => user.userId === userId);
+          if (!user) return null;
+          const currentIndex = user.stories.findIndex((story) =>
+            story.id === currentStoryId
+          );
+          if (currentIndex === -1) return null;
+          if (currentIndex > 0) {
+            const previousStory = user.stories[currentIndex - 1];
+            return { id: previousStory.id };
+          }
+          const previousUser = get().getPreviousUser(userId);
+          return previousUser && previousUser.stories.length > 0
+            ? { id: previousUser.stories[previousUser.stories.length - 1].id }
+            : null;
+        },
+        hasNextStory: (userId, currentStoryId) => {
           const user = get().users.find((user) => user.userId === userId);
           if (!user) return false;
+          const currentIndex = user.stories.findIndex((story) =>
+            story.id === currentStoryId
+          );
+          if (currentIndex === -1) return false;
           if (currentIndex < user.stories.length - 1) {
             return true;
           }
           return get().getNextUser(userId) !== null;
         },
-        hasPreviousStory: (userId, currentIndex) => {
+        hasPreviousStory: (userId, currentStoryId) => {
           const user = get().users.find((user) => user.userId === userId);
           if (!user) return false;
+          const currentIndex = user.stories.findIndex((story) =>
+            story.id === currentStoryId
+          );
           return currentIndex > 0;
         },
-        setCurrentUserAndStory: (userId, storyIndex) => {
-          set({ currentUserId: userId, currentStoryIndex: storyIndex });
+        setCurrentUserAndStory: (userId, storyId) => {
+          set({ currentUserId: userId, currentStoryId: storyId });
         },
         closeViewer: () => set({ selectedUser: null }),
         initializeStories: (stories: UserStories[]) => {

@@ -27,20 +27,23 @@ export default function StoryViewer({ userId, onClose }: StoryViewerProps) {
   const getNextUser = useStoriesStore((state) => state.getNextUser);
 
   const currentUserId = useStoriesStore((state) => state.currentUserId);
-  const currentStoryIndex = useStoriesStore((state) => state.currentStoryIndex);
+  const currentStoryId = useStoriesStore((state) => state.currentStoryId);
   const setCurrentUserAndStory = useStoriesStore((state) =>
     state.setCurrentUserAndStory
   );
+
+  const currentStory = user?.stories.find((story) =>
+    story.id === currentStoryId
+  );
+
   useEffect(() => {
-    if (user) {
-      setCurrentUserAndStory(userId, 0);
+    if (user && user.stories.length > 0) {
+      setCurrentUserAndStory(userId, user.stories[0].id);
     }
   }, [userId, setCurrentUserAndStory, user]);
 
   useEffect(() => {
-    if (user) {
-      const currentStory = user.stories[currentStoryIndex];
-
+    if (currentStory) {
       const img = new window.Image();
       img.src = currentStory.imageUrl;
       img.onload = () => {
@@ -50,27 +53,45 @@ export default function StoryViewer({ userId, onClose }: StoryViewerProps) {
         }
       };
     }
-  }, [currentStoryIndex, currentUserId, user, markStoryAsViewed]);
+  }, [currentStory, currentUserId, markStoryAsViewed]);
 
-  const handleNext = () => {
-    const nextStory = getNextStory(currentUserId!, currentStoryIndex);
+  const handleNextStory = () => {
+    const nextStory = getNextStory(currentUserId!, currentStoryId!);
     if (nextStory) {
-      setCurrentUserAndStory(currentUserId!, nextStory.index);
+      setCurrentUserAndStory(currentUserId!, nextStory.id);
       setLoading(true);
     } else {
       onClose();
     }
   };
 
-  const handlePrevious = () => {
-    const previousStory = getPreviousStory(currentUserId!, currentStoryIndex);
+  const handlePreviousStory = () => {
+    const previousStory = getPreviousStory(currentUserId!, currentStoryId!);
     if (previousStory) {
-      setCurrentUserAndStory(currentUserId!, previousStory.index);
+      setCurrentUserAndStory(currentUserId!, previousStory.id);
       setLoading(true);
     }
   };
 
-  if (!user) {
+  const handlePreviousUser = () => {
+    const previousUser = getPreviousUser(currentUserId!);
+    if (previousUser) {
+      setCurrentUserAndStory(previousUser.userId, previousUser.stories[0].id);
+      setLoading(true);
+    }
+  };
+
+  const handleNextUser = () => {
+    const nextUser = getNextUser(currentUserId!);
+    if (nextUser) {
+      setCurrentUserAndStory(nextUser.userId, nextUser.stories[0].id);
+      setLoading(true);
+    } else {
+      onClose();
+    }
+  };
+
+  if (!user || !currentStory) {
     return null;
   }
 
@@ -94,45 +115,65 @@ export default function StoryViewer({ userId, onClose }: StoryViewerProps) {
       <div className="grid grid-cols-3 w-full h-full">
         <div className="flex items-center justify-end">
           {hasPreviousUser(currentUserId!) && (
-            <UserPreview
-              user={getPreviousUser(currentUserId!)!}
-              onClick={handlePrevious}
-            />
-          )}
-          {hasPreviousStory(currentUserId!, currentStoryIndex) && (
-            <button onClick={handlePrevious} className="text-white text-xl">
-              &larr;
-            </button>
+            <div
+              className="flex-shrink-0 w-2/5 h-2/5 bg-gray-500 flex items-center justify-center"
+              style={{ backgroundColor: "rgba(135, 135, 135, 1)" }}
+            >
+              <UserPreview
+                user={getPreviousUser(currentUserId!)!}
+                onClick={handlePreviousUser}
+              />
+            </div>
           )}
         </div>
-        <div className="relative flex items-center justify-center">
-          {loading && currentStoryIndex !== null && (
+        <div className="relative px-4">
+          {loading && currentStoryId !== null && (
             <div className="absolute inset-0 flex items-center justify-center">
               <div className="loader"></div>
             </div>
           )}
-          <div
-            className="w-full h-full bg-cover bg-center"
-            style={{
-              backgroundImage: `url(${
-                user.stories[currentStoryIndex]?.imageUrl
-              })`,
-              backgroundColor: "rgba(135, 135, 135, 1)",
-            }}
-          >
+          <div className="flex items-center w-full h-full">
+            {hasPreviousStory(currentUserId!, currentStoryId!) && (
+              <button
+                onClick={handlePreviousStory}
+                className="flex-none text-black bg-white rounded-full w-3 h-3"
+                aria-label="Previous Story"
+              >
+                &larr;
+              </button>
+            )}
+            <div
+              className="flex-grow h-full bg-cover bg-center"
+              style={{
+                backgroundImage: `url(${currentStory.imageUrl})`,
+                backgroundColor: "rgba(135, 135, 135, 1)",
+                aspectRatio: "10 / 18",
+              }}
+            >
+            </div>
+            {hasNextStory(currentUserId!, currentStoryId!) && (
+              <button
+                onClick={handleNextStory}
+                className="flex-none text-black bg-white rounded-full w-3 h-3"
+                aria-label="Next Story"
+              >
+                &rarr;
+              </button>
+            )}
           </div>
         </div>
         <div className="flex items-center justify-start">
-          {hasNextStory(currentUserId!, currentStoryIndex) && (
-            <button onClick={handleNext} className="text-white text-xl">
-              &rarr;
-            </button>
-          )}
           {hasNextUser(currentUserId!) && (
-            <UserPreview
-              user={getNextUser(currentUserId!)!}
-              onClick={handleNext}
-            />
+            <div
+              onClick={() => handleNextUser()}
+              className="flex-shrink-0 w-2/5 h-2/5 bg-gray-500 flex items-center justify-center"
+              style={{ backgroundColor: "rgba(135, 135, 135, 1)" }}
+            >
+              <UserPreview
+                user={getNextUser(currentUserId!)!}
+                onClick={handleNextUser}
+              />
+            </div>
           )}
         </div>
       </div>

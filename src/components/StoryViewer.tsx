@@ -1,7 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useStoriesStore } from "@/store/useStoriesStore";
+import { useStoriesStore } from "@/providers/stories-store-provider";
+import NextImage from "next/image";
+import UserPreview from "./UserPreview";
+import { UserStories } from "@/types/stories";
 
 interface StoryViewerProps {
   userId: number;
@@ -9,30 +12,50 @@ interface StoryViewerProps {
 }
 
 export default function StoryViewer({ userId, onClose }: StoryViewerProps) {
-  const [currentIndex, setCurrentIndex] = useState(0);
   const [loading, setLoading] = useState(true);
   const user = useStoriesStore((state) =>
-    state.users.find((user) => user.userId === userId)
+    state.users.find((user: UserStories) => user.userId === userId)
   );
   const markStoryAsViewed = useStoriesStore((state) => state.markStoryAsViewed);
+  const getNextStory = useStoriesStore((state) => state.getNextStory);
+  const getPreviousStory = useStoriesStore((state) => state.getPreviousStory);
+  const hasNextStory = useStoriesStore((state) => state.hasNextStory);
+  const hasPreviousStory = useStoriesStore((state) => state.hasPreviousStory);
+  const hasPreviousUser = useStoriesStore((state) => state.hasPreviousUser);
+  const hasNextUser = useStoriesStore((state) => state.hasNextUser);
+  const getPreviousUser = useStoriesStore((state) => state.getPreviousUser);
+  const getNextUser = useStoriesStore((state) => state.getNextUser);
+
+  const currentUserId = useStoriesStore((state) => state.currentUserId);
+  const currentStoryIndex = useStoriesStore((state) => state.currentStoryIndex);
+  const setCurrentUserAndStory = useStoriesStore((state) =>
+    state.setCurrentUserAndStory
+  );
+  useEffect(() => {
+    if (user) {
+      setCurrentUserAndStory(userId, 0);
+    }
+  }, [userId, setCurrentUserAndStory, user]);
 
   useEffect(() => {
     if (user) {
-      const currentStory = user.stories[currentIndex];
-      if (!currentStory.viewed) {
-        markStoryAsViewed(userId, currentStory.id);
-      }
+      const currentStory = user.stories[currentStoryIndex];
 
-      // Preload the image
-      const img = new Image();
+      const img = new window.Image();
       img.src = currentStory.imageUrl;
-      img.onload = () => setLoading(false);
+      img.onload = () => {
+        setLoading(false);
+        if (!currentStory.viewed && currentUserId !== null) {
+          markStoryAsViewed(currentUserId, currentStory.id);
+        }
+      };
     }
-  }, [currentIndex, userId, user, markStoryAsViewed]);
+  }, [currentStoryIndex, currentUserId, user, markStoryAsViewed]);
 
   const handleNext = () => {
-    if (user && currentIndex < user.stories.length - 1) {
-      setCurrentIndex(currentIndex + 1);
+    const nextStory = getNextStory(currentUserId!, currentStoryIndex);
+    if (nextStory) {
+      setCurrentUserAndStory(currentUserId!, nextStory.index);
       setLoading(true);
     } else {
       onClose();
@@ -40,8 +63,9 @@ export default function StoryViewer({ userId, onClose }: StoryViewerProps) {
   };
 
   const handlePrevious = () => {
-    if (currentIndex > 0) {
-      setCurrentIndex(currentIndex - 1);
+    const previousStory = getPreviousStory(currentUserId!, currentStoryIndex);
+    if (previousStory) {
+      setCurrentUserAndStory(currentUserId!, previousStory.index);
       setLoading(true);
     }
   };
@@ -51,16 +75,38 @@ export default function StoryViewer({ userId, onClose }: StoryViewerProps) {
   }
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center">
-      <button
-        className="absolute top-4 right-4 text-white text-2xl"
-        onClick={onClose}
-      >
-        &times;
-      </button>
-      <div className="relative w-full max-w-md">
-        <div className="relative h-[85vh] aspect-[1/1.8]">
-          {loading && (
+    <div className="fixed inset-0 bg-black flex flex-col">
+      <div className="flex justify-between items-center p-4">
+        <NextImage
+          src="/instagram_wordmark.svg"
+          alt="Instagram logo"
+          width={100}
+          height={40}
+        />
+        <button
+          onClick={onClose}
+          className="text-white text-xl"
+          aria-label="Close"
+        >
+          &times;
+        </button>
+      </div>
+      <div className="grid grid-cols-3 w-full h-full">
+        <div className="flex items-center justify-end">
+          {hasPreviousUser(currentUserId!) && (
+            <UserPreview
+              user={getPreviousUser(currentUserId!)!}
+              onClick={handlePrevious}
+            />
+          )}
+          {hasPreviousStory(currentUserId!, currentStoryIndex) && (
+            <button onClick={handlePrevious} className="text-white text-xl">
+              &larr;
+            </button>
+          )}
+        </div>
+        <div className="relative flex items-center justify-center">
+          {loading && currentStoryIndex !== null && (
             <div className="absolute inset-0 flex items-center justify-center">
               <div className="loader"></div>
             </div>
@@ -68,37 +114,27 @@ export default function StoryViewer({ userId, onClose }: StoryViewerProps) {
           <div
             className="w-full h-full bg-cover bg-center"
             style={{
-              backgroundImage: `url(${user.stories[currentIndex].imageUrl})`,
+              backgroundImage: `url(${
+                user.stories[currentStoryIndex]?.imageUrl
+              })`,
               backgroundColor: "rgba(135, 135, 135, 1)",
             }}
           >
           </div>
-          <div className="absolute top-0 left-0 w-full h-1 bg-gray-500">
-            <div
-              className="bg-white h-full transition-all duration-300 ease-linear"
-              style={{
-                width: `${((currentIndex + 1) / user.stories.length) * 100}%`,
-              }}
-            >
-            </div>
-          </div>
         </div>
-        {currentIndex > 0 && (
-          <button
-            onClick={handlePrevious}
-            className="absolute left-2 top-1/2 transform -translate-y-1/2 text-white text-3xl"
-          >
-            &#8249;
-          </button>
-        )}
-        {currentIndex < user.stories.length - 1 && (
-          <button
-            onClick={handleNext}
-            className="absolute right-2 top-1/2 transform -translate-y-1/2 text-white text-3xl"
-          >
-            &#8250;
-          </button>
-        )}
+        <div className="flex items-center justify-start">
+          {hasNextStory(currentUserId!, currentStoryIndex) && (
+            <button onClick={handleNext} className="text-white text-xl">
+              &rarr;
+            </button>
+          )}
+          {hasNextUser(currentUserId!) && (
+            <UserPreview
+              user={getNextUser(currentUserId!)!}
+              onClick={handleNext}
+            />
+          )}
+        </div>
       </div>
     </div>
   );

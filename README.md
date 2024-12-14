@@ -29,6 +29,7 @@ Did:
 * Matches Inter font from Figma
 * Server-rendered Stories List on homepage for speed, but doesn't support loading additional users
 * Story viewer is client-only and doesn't have permalink
+* Relies on api to sort users + stories initially
 
 TODO:
 * Dynamic URLs + page titles for image viewer

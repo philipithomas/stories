@@ -25,10 +25,10 @@ export async function GET(request: Request) {
     const prompt =
       "a scenic nature picture that might be shown on social media, with no people visible.";
     const response = await openai.images.generate({
-      model: "dall-e-3",
+      model: "dall-e-2",
       prompt,
       n: 1,
-      size: "1024x1024",
+      size: "256x256",
     });
 
     const imageUrl = response.data[0]?.url;

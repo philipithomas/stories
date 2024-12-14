@@ -22,7 +22,7 @@ export default function UserPreview({ user, onClick }: UserPreviewProps) {
           </div>
         </div>
       </div>
-      <p className="text-[10px] font-normal leading-[12.1px] text-center mt-1 text-gray-900">
+      <p className="text-[10px] font-normal leading-[12px] text-center pt-2 text-gray-900">
         {user.username}
       </p>
     </button>

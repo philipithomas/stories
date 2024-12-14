@@ -1,11 +1,11 @@
 import { Story, UserStories } from "@/types/stories";
 import {
   EllipsisHorizontalIcon,
-  HeartIcon,
   PaperAirplaneIcon,
   PlayIcon,
   SpeakerWaveIcon,
 } from "@heroicons/react/24/solid";
+import { HeartIcon } from "@heroicons/react/24/outline";
 import Image from "next/image";
 import { useRef, useState } from "react";
 
@@ -53,10 +53,10 @@ export default function StoryDisplay(
           {user.stories.map((_, index) => (
             <div
               key={index}
-              className={`h-1 flex-1 rounded-full ${
+              className={`h-0.5 flex-1 rounded-full ${
                 index < user.stories.indexOf(currentStory)
                   ? "bg-white"
-                  : "bg-gray-400"
+                  : "bg-[#a5a5a5]"
               }`}
             >
             </div>
@@ -105,15 +105,12 @@ export default function StoryDisplay(
               }
             }}
             placeholder={replyText ? "" : `Reply to ${user.username}...`}
-            className={`flex-grow bg-transparent outline-none resize-none transition-all duration-300 border border-white rounded-full text-white placeholder-white placeholder-xs ${
-              replyText ? "h-12" : "h-6"
+            className={`flex-grow bg-transparent outline-none resize-none transition-all duration-300 border border-white rounded-full text-white placeholder-white placeholder-xs text-xs ${
+              replyText ? "h-16" : "h-8"
             }`}
             style={{
-              fontSize: "10px",
-              padding: "4px 4px 4px 12px",
-              backgroundColor: replyText
-                ? "rgba(50, 50, 50, 0.8)"
-                : "transparent",
+              padding: replyText ? "8px 8px 8px 20px" : "8px 8px 8px 16px",
+              backgroundColor: "rgba(50, 50, 50, 0.3)",
             }}
           />
           <button className="hover:text-gray-300 active:text-gray-500">

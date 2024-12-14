@@ -20,14 +20,14 @@ export default async function Home() {
 
     return (
       <div className="min-h-screen bg-white flex">
-        <aside className="flex flex-col items-center p-4 border-r border-gray-300">
+        <aside className="flex flex-col items-center p-8 border-r border-gray-300">
           <Link href="/">
             <Image
               src="/instagram_icon.svg"
               alt="Instagram logo"
               width={32}
               height={32}
-              className="mt-[39px] mx-[25px] mb-4"
+              className="my-4 h-[32px] w-[32px]"
             />
           </Link>
         </aside>

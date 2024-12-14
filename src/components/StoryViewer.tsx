@@ -5,7 +5,11 @@ import { useStoriesStore } from "@/providers/stories-store-provider";
 import NextImage from "next/image";
 import UserPreview from "./UserPreview";
 import { UserStories } from "@/types/stories";
-import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/solid";
+import {
+  ChevronLeftIcon,
+  ChevronRightIcon,
+  XMarkIcon,
+} from "@heroicons/react/16/solid";
 import StoryDisplay from "./StoryDisplay";
 
 export default function StoryViewer() {
@@ -102,10 +106,10 @@ export default function StoryViewer() {
         />
         <button
           onClick={() => setCurrentUser(null)}
-          className="text-white text-xl"
+          className="text-white p-1 rounded-full hover:bg-gray-800 focus:outline-none"
           aria-label="Close"
         >
-          &times;
+          <XMarkIcon className="w-6 h-6" />
         </button>
       </div>
       <div className="grid grid-cols-3 w-full flex-grow">
@@ -137,7 +141,7 @@ export default function StoryViewer() {
                   className="bg-white rounded-full w-full h-full flex items-center justify-center"
                   aria-label="Previous Story"
                 >
-                  <ChevronLeftIcon className="w-4 h-4 text-[#1a1a1a]" />
+                  <ChevronLeftIcon className="w-6 h-6 text-[#1a1a1a]" />
                 </button>
               )}
             </div>
@@ -153,7 +157,7 @@ export default function StoryViewer() {
                   className="bg-white rounded-full w-full h-full flex items-center justify-center"
                   aria-label="Next Story"
                 >
-                  <ChevronRightIcon className="w-4 h-4 text-[#1a1a1a]" />
+                  <ChevronRightIcon className="w-6 h-6 text-[#1a1a1a]" />
                 </button>
               )}
             </div>

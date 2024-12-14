@@ -3,20 +3,12 @@
 import UserPreview from "./UserPreview";
 import StoryViewer from "./StoryViewer";
 import { useStoriesStore } from "@/providers/stories-store-provider";
-import { useState } from "react";
 import { UserStories } from "@/types/stories";
 
 export default function StoryList() {
   const users = useStoriesStore((state) => state.users);
-  const [selectedUser, setSelectedUser] = useState<number | null>(null);
-
-  const handleStorySelect = (userId: number) => {
-    setSelectedUser(userId);
-  };
-
-  const handleClose = () => {
-    setSelectedUser(null);
-  };
+  const currentUserId = useStoriesStore((state) => state.currentUserId);
+  const setCurrentUser = useStoriesStore((state) => state.setCurrentUser);
 
   return (
     <div>
@@ -25,13 +17,11 @@ export default function StoryList() {
           <UserPreview
             key={user.userId}
             user={user}
-            onClick={handleStorySelect}
+            onClick={() => setCurrentUser(user.userId)}
           />
         ))}
       </div>
-      {selectedUser && (
-        <StoryViewer userId={selectedUser} onClose={handleClose} />
-      )}
+      {currentUserId && <StoryViewer />}
     </div>
   );
 }

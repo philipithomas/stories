@@ -6,16 +6,12 @@ import NextImage from "next/image";
 import UserPreview from "./UserPreview";
 import { UserStories } from "@/types/stories";
 
-interface StoryViewerProps {
-  userId: number;
-  onClose: () => void;
-}
-
-export default function StoryViewer({ userId, onClose }: StoryViewerProps) {
+export default function StoryViewer() {
   const [loading, setLoading] = useState(true);
-  const user = useStoriesStore((state) =>
-    state.users.find((user: UserStories) => user.userId === userId)
-  );
+  const currentUserId = useStoriesStore((state) => state.currentUserId);
+  const currentStoryId = useStoriesStore((state) => state.currentStoryId);
+  const users = useStoriesStore((state) => state.users);
+  const user = users.find((user: UserStories) => user.userId === currentUserId);
   const markStoryAsViewed = useStoriesStore((state) => state.markStoryAsViewed);
   const getNextStory = useStoriesStore((state) => state.getNextStory);
   const getPreviousStory = useStoriesStore((state) => state.getPreviousStory);
@@ -25,9 +21,7 @@ export default function StoryViewer({ userId, onClose }: StoryViewerProps) {
   const hasNextUser = useStoriesStore((state) => state.hasNextUser);
   const getPreviousUser = useStoriesStore((state) => state.getPreviousUser);
   const getNextUser = useStoriesStore((state) => state.getNextUser);
-
-  const currentUserId = useStoriesStore((state) => state.currentUserId);
-  const currentStoryId = useStoriesStore((state) => state.currentStoryId);
+  const setCurrentUser = useStoriesStore((state) => state.setCurrentUser);
   const setCurrentUserAndStory = useStoriesStore((state) =>
     state.setCurrentUserAndStory
   );
@@ -37,10 +31,10 @@ export default function StoryViewer({ userId, onClose }: StoryViewerProps) {
   );
 
   useEffect(() => {
-    if (user && user.stories.length > 0) {
-      setCurrentUserAndStory(userId, user.stories[0].id);
+    if (user) {
+      setCurrentUser(currentUserId!);
     }
-  }, [userId, setCurrentUserAndStory, user]);
+  }, [currentUserId, setCurrentUser, user]);
 
   useEffect(() => {
     if (currentStory) {
@@ -61,7 +55,7 @@ export default function StoryViewer({ userId, onClose }: StoryViewerProps) {
       setCurrentUserAndStory(currentUserId!, nextStory.id);
       setLoading(true);
     } else {
-      onClose();
+      setCurrentUser(null);
     }
   };
 
@@ -76,7 +70,7 @@ export default function StoryViewer({ userId, onClose }: StoryViewerProps) {
   const handlePreviousUser = () => {
     const previousUser = getPreviousUser(currentUserId!);
     if (previousUser) {
-      setCurrentUserAndStory(previousUser.userId, previousUser.stories[0].id);
+      setCurrentUser(previousUser.userId);
       setLoading(true);
     }
   };
@@ -84,10 +78,10 @@ export default function StoryViewer({ userId, onClose }: StoryViewerProps) {
   const handleNextUser = () => {
     const nextUser = getNextUser(currentUserId!);
     if (nextUser) {
-      setCurrentUserAndStory(nextUser.userId, nextUser.stories[0].id);
+      setCurrentUser(nextUser.userId);
       setLoading(true);
     } else {
-      onClose();
+      setCurrentUser(null);
     }
   };
 
@@ -105,7 +99,7 @@ export default function StoryViewer({ userId, onClose }: StoryViewerProps) {
           height={40}
         />
         <button
-          onClick={onClose}
+          onClick={() => setCurrentUser(null)}
           className="text-white text-xl"
           aria-label="Close"
         >

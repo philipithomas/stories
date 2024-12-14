@@ -4,13 +4,12 @@ import { UserStories } from "@/types/stories";
 
 export interface StoriesState {
   users: UserStories[];
-  selectedUser: number | null;
   currentUserId: number | null;
   currentStoryId: number | null;
 }
 
 export interface StoriesActions {
-  setSelectedUser: (userId: number) => void;
+  setCurrentUser: (userId: number | null) => void;
   markStoryAsViewed: (userId: number, storyId: number) => void;
   markUserStoriesAsViewed: (userId: number) => void;
   getPreviousUser: (userId: number) => UserStories | null;
@@ -38,7 +37,6 @@ export type StoriesStore = StoriesState & StoriesActions;
 
 export const initStoriesStore = (): StoriesState => ({
   users: [],
-  selectedUser: null,
   currentUserId: null,
   currentStoryId: null,
 });
@@ -52,7 +50,22 @@ export const createStoriesStore = (
     persist(
       (set, get) => ({
         ...initState,
-        setSelectedUser: (userId) => set({ selectedUser: userId }),
+        setCurrentUser: (userId) => {
+          if (userId === null) {
+            set({ currentUserId: null, currentStoryId: null });
+          } else {
+            const user = get().users.find((user) => user.userId === userId);
+            if (user) {
+              const firstUnviewedStory = user.stories.find((story) =>
+                !story.viewed
+              );
+              const currentStoryId = firstUnviewedStory
+                ? firstUnviewedStory.id
+                : user.stories[0].id;
+              set({ currentUserId: userId, currentStoryId });
+            }
+          }
+        },
         markStoryAsViewed: (userId, storyId) => {
           set((state) => {
             const updatedUsers = state.users.map((user) => {
@@ -184,7 +197,11 @@ export const createStoriesStore = (
         setCurrentUserAndStory: (userId, storyId) => {
           set({ currentUserId: userId, currentStoryId: storyId });
         },
-        closeViewer: () => set({ selectedUser: null }),
+        closeViewer: () =>
+          set({
+            currentUserId: null,
+            currentStoryId: null,
+          }),
         initializeStories: (stories: UserStories[]) => {
           set({ users: stories });
         },

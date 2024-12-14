@@ -78,9 +78,15 @@ export default function StoryDisplay(
           </div>
           {/* Icons */}
           <div className="flex space-x-4">
-            <PlayIcon className="w-6 h-6" />
-            <SpeakerWaveIcon className="w-6 h-6" />
-            <EllipsisHorizontalIcon className="w-6 h-6" />
+            <button className="hover:text-gray-300 active:text-gray-500">
+              <PlayIcon className="w-6 h-6" />
+            </button>
+            <button className="hover:text-gray-300 active:text-gray-500">
+              <SpeakerWaveIcon className="w-6 h-6" />
+            </button>
+            <button className="hover:text-gray-300 active:text-gray-500">
+              <EllipsisHorizontalIcon className="w-6 h-6" />
+            </button>
           </div>
         </div>
       </div>
@@ -110,8 +116,14 @@ export default function StoryDisplay(
                 : "transparent",
             }}
           />
-          <HeartIcon className="w-6 h-6" />
-          <button onClick={handleSendReply} disabled={!replyText}>
+          <button className="hover:text-gray-300 active:text-gray-500">
+            <HeartIcon className="w-6 h-6" />
+          </button>
+          <button
+            onClick={handleSendReply}
+            disabled={!replyText}
+            className="hover:text-gray-300 active:text-gray-500"
+          >
             <PaperAirplaneIcon
               className={`w-6 h-6 text-white`}
             />

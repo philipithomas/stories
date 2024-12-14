@@ -23,17 +23,18 @@ Set up your local credentials with `cp .env.example .env` and fill in the missin
 
 ## Design notes
 
-Did:
+Done:
 
 * Desktop-first design
 * Matches Inter font from Figma
-* Server-rendered Stories List on homepage for speed, but doesn't support loading additional users
+* HeroIcons for icons
 * Story viewer is client-only and doesn't have permalink
 * Relies on api to sort users + stories initially
 
 TODO:
 * Dynamic URLs + page titles for image viewer
 * Better error handling
+* Loading additional users
 
 ## REST API Design
 

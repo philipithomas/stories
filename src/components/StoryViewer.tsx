@@ -5,6 +5,7 @@ import { useStoriesStore } from "@/providers/stories-store-provider";
 import NextImage from "next/image";
 import UserPreview from "./UserPreview";
 import { UserStories } from "@/types/stories";
+import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/solid";
 
 export default function StoryViewer() {
   const [loading, setLoading] = useState(true);
@@ -141,13 +142,7 @@ export default function StoryViewer() {
                   className="bg-white rounded-full w-full h-full flex items-center justify-center"
                   aria-label="Previous Story"
                 >
-                  <NextImage
-                    src="/left_chevron.svg"
-                    alt="Previous"
-                    width={16}
-                    height={16}
-                    className="w-4 h-4"
-                  />
+                  <ChevronLeftIcon className="w-4 h-4 text-[#1a1a1a]" />
                 </button>
               )}
             </div>
@@ -167,13 +162,7 @@ export default function StoryViewer() {
                   className="bg-white rounded-full w-full h-full flex items-center justify-center"
                   aria-label="Next Story"
                 >
-                  <NextImage
-                    src="/right_chevron.svg"
-                    alt="Next"
-                    width={16}
-                    height={16}
-                    className="w-4 h-4"
-                  />
+                  <ChevronRightIcon className="w-4 h-4 text-[#1a1a1a]" />
                 </button>
               )}
             </div>

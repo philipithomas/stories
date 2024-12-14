@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useStoriesStore } from "@/store/useStoriesStore";
+import { useStoriesStore } from "@/providers/StoriesStoreProvider";
 
 interface StoryViewerProps {
   userId: number;

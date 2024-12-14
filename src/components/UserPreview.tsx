@@ -4,10 +4,17 @@ import { UserStories } from "@/types/stories";
 interface UserPreviewProps {
   user: UserStories;
   onClick: (userId: number) => void;
+  textColor?: "light" | "dark";
+  showTime?: boolean;
 }
 
-export default function UserPreview({ user, onClick }: UserPreviewProps) {
+export default function UserPreview(
+  { user, onClick, textColor = "dark", showTime = false }: UserPreviewProps,
+) {
   const allViewed = user.stories.every((story) => story.viewed);
+
+  const textColorClass = textColor === "light" ? "text-white" : "text-gray-900";
+
   return (
     <button onClick={() => onClick(user.userId)} className="flex-shrink-0">
       <div className="relative w-16 h-16">
@@ -22,9 +29,18 @@ export default function UserPreview({ user, onClick }: UserPreviewProps) {
           </div>
         </div>
       </div>
-      <p className="text-[10px] font-normal leading-[12px] text-center pt-2 text-gray-900">
+      <p
+        className={`text-[10px] font-normal leading-[12px] text-center pt-2 ${textColorClass}`}
+      >
         {user.username}
       </p>
+      {showTime && (
+        <p
+          className={`text-[10px] font-normal leading-[12px] text-center opacity-50 ${textColorClass}`}
+        >
+          2h
+        </p>
+      )}
     </button>
   );
 }

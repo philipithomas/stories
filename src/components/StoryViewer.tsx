@@ -122,6 +122,8 @@ export default function StoryViewer() {
               <UserPreview
                 user={getPreviousUser(currentUserId!)!}
                 onClick={handlePreviousUser}
+                textColor="light"
+                showTime={true}
               />
             </div>
           )}
@@ -173,6 +175,8 @@ export default function StoryViewer() {
               <UserPreview
                 user={getNextUser(currentUserId!)!}
                 onClick={handleNextUser}
+                textColor="light"
+                showTime={true}
               />
             </div>
           )}
